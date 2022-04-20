@@ -2,11 +2,9 @@ package com.example.Base58_practice.contoller;
 
 import com.example.Base58_practice.dto.UpdateUserDto;
 import com.example.Base58_practice.dto.UserDto;
-import com.example.Base58_practice.model.User;
 import com.example.Base58_practice.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -14,7 +12,6 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
 import java.util.List;
 
 
