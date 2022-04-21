@@ -66,16 +66,4 @@ public class UserControllerNew {
         this.userService.deleteUser(id);
     }
 
-/*
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    @GetMapping("{id}")
-    public UserDto getByUserId() {
-        final UserDto userDto = new UserDto();
-        userDto.setFirstName("test");
-        return userDto;
-    }
-*/
-
-
 }
