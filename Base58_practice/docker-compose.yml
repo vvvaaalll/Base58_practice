@@ -29,6 +29,23 @@ services:
       - "8080:8080"
     depends_on:
       - postgres
+      - rabbitmq
+
+  rabbitmq:
+    hostname: rabbitmq
+    image: rabbitmq:3.9.11-management-alpine
+    volumes:
+      - ./docker/rabbitmq/import.json:/tmp/import.json
+    environment:
+      - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbitmq_management load_definitions "/tmp/import.json"
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 30s
+    ports:
+      - "15672:15672"
+    networks:
+      - base58_practice
 
 
   postgres:
@@ -62,3 +79,15 @@ services:
 
     depends_on:
       - postgres
+
+  portainer:
+    container_name: portainer
+    image: portainer/portainer-ce:alpine
+    command: -H unix:///var/run/docker.sock --admin-password='$$2y$$05$$BNtOCXwleH1JUCz5VuiX5.DxZDLezDoxIlCTn5a0fkIINGWBaQv9.'
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "wget --spider http://localhost:9000 || exit 1" ]
+      interval: 1m
+      timeout: 30s
+    ports:
+      - "9000:9000"

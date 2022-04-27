@@ -1,10 +1,12 @@
 package com.example.Base58_practice.service;
 
+import com.example.Base58_practice.config.MessagingConfig;
 import com.example.Base58_practice.dto.UpdateUserDto;
 import com.example.Base58_practice.dto.UserDto;
 import com.example.Base58_practice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import com.example.Base58_practice.model.User;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,11 +25,12 @@ public class UserService {
 
     private final UserRepository repository;
 
+
     public UserDto getUserById(final long id) throws RuntimeException {
         return mapEntityToUserDto(this.repository.findById(id).orElseThrow(() -> new RuntimeException("user not found")));
     }
 
-    public Page<UserDto> getUserPage(final Pageable pageable){
+    public Page<UserDto> getUserPage(final Pageable pageable) {
         return repository.findAll(pageable).map(this::mapEntityToUserDto);
     }
 
@@ -86,29 +89,29 @@ public class UserService {
             });
     * */
 
-    public UserDto patchUser(final long id, final UpdateUserDto updateUserDto){
+    public UserDto patchUser(final long id, final UpdateUserDto updateUserDto) {
         return mapEntityToUserDto(this.repository.save(mapUpdateUserDtoToEntity(this.repository.findById(id).orElseThrow(() -> new RuntimeException("user not found")), updateUserDto)));
     }
 
-    public void deleteUser(final long id) throws RuntimeException{
+    public void deleteUser(final long id) throws RuntimeException {
         repository.delete(this.repository.findById(id).orElseThrow(() -> new RuntimeException("No user with such ID")));
     }
 
 
-    public UserDto addUser(final UserDto userDto){
+    public UserDto addUser(final UserDto userDto) {
         User user = new User();
         user.setFirstName(userDto.getFirstName());
         user.setLastName(userDto.getLastName());
         user.setEmail(userDto.getEmail());
         user.setPhone(userDto.getPhone());
 
+
+
+
         return mapEntityToUserDto(this.repository.save(user));
 
 
     }
-
-
-
 
 
     private User mapUpdateUserDtoToEntity(final User userEntity, final UpdateUserDto updateUserDto) throws RuntimeException {
@@ -118,7 +121,6 @@ public class UserService {
         updateUserDto.getOptionalPhone().ifPresent(userEntity::setPhone);
         return userEntity;
     }
-
 
 
     private UserDto mapEntityToUserDto(final User user) {

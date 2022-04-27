@@ -2,6 +2,7 @@ package com.example.Base58_practice.contoller;
 
 import com.example.Base58_practice.dto.UpdateUserDto;
 import com.example.Base58_practice.dto.UserDto;
+import com.example.Base58_practice.service.RabbitMqSender;
 import com.example.Base58_practice.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -18,16 +19,17 @@ import java.util.List;
 @Controller
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
-public class UserControllerNew {
+public class UserController {
 
 
     private final UserService userService;
+    private final RabbitMqSender rabbitMQSender;
 
     @Operation(description = "Returns page of users", summary = "Returns page of users")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @GetMapping(consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, path = "/page")
-    public Page<UserDto> getUserPage(final Pageable pageable){
+    public Page<UserDto> getUserPage(final Pageable pageable) {
         return userService.getUserPage(pageable);
     }
 
@@ -43,6 +45,8 @@ public class UserControllerNew {
     @ResponseBody
     @PostMapping()
     public UserDto addUser(@RequestBody UserDto userDto) throws RuntimeException {
+
+        rabbitMQSender.send(userDto);
         return this.userService.addUser(userDto);
     }
 
@@ -62,7 +66,7 @@ public class UserControllerNew {
 
     @ResponseStatus(HttpStatus.I_AM_A_TEAPOT)
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable("id") long id) throws RuntimeException{
+    public void deleteUser(@PathVariable("id") long id) throws RuntimeException {
         this.userService.deleteUser(id);
     }
 
