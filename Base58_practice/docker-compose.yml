@@ -44,6 +44,7 @@ services:
       timeout: 30s
     ports:
       - "15672:15672"
+      - "5672:5672"
     networks:
       - base58_practice
 
@@ -56,6 +57,9 @@ services:
     user: postgres
     environment:
       - POSTGRES_PASSWORD=postgres
+
+    ports:
+      - "5432:5432"
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready" ]
       interval: 30s
@@ -83,11 +87,5 @@ services:
   portainer:
     container_name: portainer
     image: portainer/portainer-ce:alpine
-    command: -H unix:///var/run/docker.sock --admin-password='$$2y$$05$$BNtOCXwleH1JUCz5VuiX5.DxZDLezDoxIlCTn5a0fkIINGWBaQv9.'
-    restart: always
-    healthcheck:
-      test: [ "CMD-SHELL", "wget --spider http://localhost:9000 || exit 1" ]
-      interval: 1m
-      timeout: 30s
     ports:
       - "9000:9000"

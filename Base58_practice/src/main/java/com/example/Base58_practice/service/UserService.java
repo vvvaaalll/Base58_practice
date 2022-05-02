@@ -1,5 +1,6 @@
 package com.example.Base58_practice.service;
 
+import com.example.Base58_practice.aspect.logging.annotation.VerboseLogging;
 import com.example.Base58_practice.config.MessagingConfig;
 import com.example.Base58_practice.dto.UpdateUserDto;
 import com.example.Base58_practice.dto.UserDto;
@@ -25,16 +26,16 @@ public class UserService {
 
     private final UserRepository repository;
 
-
+    @VerboseLogging
     public UserDto getUserById(final long id) throws RuntimeException {
         return mapEntityToUserDto(this.repository.findById(id).orElseThrow(() -> new RuntimeException("user not found")));
     }
-
+    @VerboseLogging
     public Page<UserDto> getUserPage(final Pageable pageable) {
         return repository.findAll(pageable).map(this::mapEntityToUserDto);
     }
 
-
+    @VerboseLogging
     public List<UserDto> getAllUsers() throws RuntimeException {
 
         List<UserDto> usersDto = new ArrayList<UserDto>();
@@ -62,42 +63,17 @@ public class UserService {
 
 
 
-    /*
-    *      List<UserDto> usersDto = new ArrayList<UserDto>();
-             repository.findAll().forEach(user -> {
-                 usersDto.add(mapEntityToUserDto(user));
 
-             });
-      return usersDto;
-    * */
-
-
-    /*
-    *   public List<UserDto> getAllUsers() throws RuntimeException {
-
-        List<UserDto> usersDto = new ArrayList<UserDto>();
-
-        Pageable paging = PageRequest.of(0, 2);
-
-        Page<User> pagedResult = repository.findAll(paging);
-
-        if (pagedResult.hasContent()) {
-
-            pagedResult.getContent().forEach(user -> {
-                usersDto.add(mapEntityToUserDto(user));
-
-            });
-    * */
-
+    @VerboseLogging
     public UserDto patchUser(final long id, final UpdateUserDto updateUserDto) {
         return mapEntityToUserDto(this.repository.save(mapUpdateUserDtoToEntity(this.repository.findById(id).orElseThrow(() -> new RuntimeException("user not found")), updateUserDto)));
     }
-
+    @VerboseLogging
     public void deleteUser(final long id) throws RuntimeException {
         repository.delete(this.repository.findById(id).orElseThrow(() -> new RuntimeException("No user with such ID")));
     }
 
-
+    @VerboseLogging
     public UserDto addUser(final UserDto userDto) {
         User user = new User();
         user.setFirstName(userDto.getFirstName());
