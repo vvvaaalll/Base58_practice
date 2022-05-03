@@ -56,6 +56,8 @@ services:
       - ./docker/postgres:/docker-entrypoint-initdb.d
     user: postgres
     environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
 
     ports:
@@ -89,3 +91,22 @@ services:
     image: portainer/portainer-ce:alpine
     ports:
       - "9000:9000"
+
+  keycloak:
+    image: bitnami/keycloak
+    environment:
+      DB_VENDOR: POSTGRES
+      DB_ADDR: postgres
+      DB_DATABASE: postgres
+      DB_USER: postgres
+      DB_SCHEMA: public
+      DB_PASSWORD: postgres
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: password
+      KEYCLOAK_LOGLEVEL: DEBUG
+      ROOT_LOGLEVEL: DEBUG
+    ports:
+      - 18080:8080
+      - 8443:8443
+    depends_on:
+      - postgres

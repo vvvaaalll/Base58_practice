@@ -10,9 +10,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.RolesAllowed;
 import java.util.List;
 
 
@@ -28,6 +30,7 @@ public class UserController {
     @Operation(description = "Returns page of users", summary = "Returns page of users")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @RolesAllowed("admin")
     @GetMapping(consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, path = "/page")
     public Page<UserDto> getUserPage(final Pageable pageable) {
         return userService.getUserPage(pageable);
@@ -36,14 +39,16 @@ public class UserController {
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @RolesAllowed("admin")
     @GetMapping(consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<UserDto> getUsers() throws RuntimeException {
-        return userService.getAllUsers();
+    public ResponseEntity<List<UserDto>> getUsers() throws RuntimeException {
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     @PostMapping()
+    @RolesAllowed({"user", "admin"})
     public UserDto addUser(@RequestBody UserDto userDto) throws RuntimeException {
 
         rabbitMQSender.send(userDto);
@@ -52,6 +57,7 @@ public class UserController {
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @RolesAllowed("user")
     @PatchMapping("/{id}")
     public UserDto patchUser(@PathVariable("id") long id, @RequestBody UpdateUserDto updateUserDto) throws RuntimeException {
         return this.userService.patchUser(id, updateUserDto);
@@ -59,6 +65,7 @@ public class UserController {
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @RolesAllowed("user")
     @GetMapping("/{id}")
     public UserDto getUserById(@PathVariable("id") long id) throws RuntimeException {
         return this.userService.getUserById(id);
