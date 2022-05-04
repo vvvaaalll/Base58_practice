@@ -39,24 +39,10 @@ public class UserService {
     public List<UserDto> getAllUsers() throws RuntimeException {
 
         List<UserDto> usersDto = new ArrayList<UserDto>();
-
-        Pageable paging = PageRequest.of(0, 3, Sort.by("firstName"));
-
-
-        Page<User> pagedResult = repository.findAll(paging);
-
-        if (pagedResult.hasContent()) {
-
-            pagedResult.getContent().forEach(user -> {
-                usersDto.add(mapEntityToUserDto(user));
-
-            });
-
-            return usersDto;
-        } else {
-
-            return usersDto;
-        }
+        repository.findAll().forEach(user -> {
+            usersDto.add(mapEntityToUserDto(user));
+        });
+        return usersDto;
 
     }
 
@@ -82,10 +68,7 @@ public class UserService {
         user.setPhone(userDto.getPhone());
 
 
-
-
         return mapEntityToUserDto(this.repository.save(user));
-
 
     }
 

@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
@@ -48,7 +49,8 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     @PostMapping()
-    @RolesAllowed({"user", "admin"})
+    @Transactional
+    @RolesAllowed({"admin", "user"})
     public UserDto addUser(@RequestBody UserDto userDto) throws RuntimeException {
 
         rabbitMQSender.send(userDto);
@@ -57,6 +59,7 @@ public class UserController {
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @Transactional
     @RolesAllowed("user")
     @PatchMapping("/{id}")
     public UserDto patchUser(@PathVariable("id") long id, @RequestBody UpdateUserDto updateUserDto) throws RuntimeException {
@@ -72,6 +75,7 @@ public class UserController {
     }
 
     @ResponseStatus(HttpStatus.I_AM_A_TEAPOT)
+    @Transactional
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable("id") long id) throws RuntimeException {
         this.userService.deleteUser(id);
