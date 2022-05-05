@@ -1,5 +1,6 @@
 package com.example.Base58_practice.contoller;
 
+import com.example.Base58_practice.aspect.logging.annotation.VerboseLogging;
 import com.example.Base58_practice.dto.UpdateUserDto;
 import com.example.Base58_practice.dto.UserDto;
 import com.example.Base58_practice.service.RabbitMqSender;
@@ -11,11 +12,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticatedPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
+import java.security.Principal;
 import java.util.List;
 
 
@@ -40,9 +43,10 @@ public class UserController {
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    @RolesAllowed("admin")
+    @VerboseLogging
+    @RolesAllowed({"admin", "user"})
     @GetMapping(consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<UserDto>> getUsers() throws RuntimeException {
+    public ResponseEntity<List<UserDto>> getUsers(final Principal user) throws RuntimeException {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 

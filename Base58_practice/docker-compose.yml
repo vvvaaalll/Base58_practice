@@ -54,6 +54,7 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
       - ./docker/postgres:/docker-entrypoint-initdb.d
+
     user: postgres
     environment:
       - POSTGRES_DB=postgres
@@ -95,18 +96,18 @@ services:
   keycloak:
     image: jboss/keycloak
     environment:
-      DB_VENDOR: POSTGRES
-      DB_ADDR: postgres
-      DB_DATABASE: postgres
-      DB_USER: postgres
-      DB_SCHEMA: public
-      DB_PASSWORD: postgres
-      KEYCLOAK_USER: admin
-      KEYCLOAK_PASSWORD: password
-      KEYCLOAK_LOGLEVEL: DEBUG
-      ROOT_LOGLEVEL: DEBUG
+      - DB_VENDOR=postgres
+      - DB_DATABASE=keycloak
+      - DB_USER=keycloak_user
+      - DB_PASSWORD=keycloak_user
+      - DB_PORT=5432
+      - DB_SCHEMA=public
+      - DB_ADDR=postgres
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=admin
+
     ports:
-      - 18080:8080
-      - 8443:8443
-    depends_on:
-      - postgres
+      - "18080:8080"
+    networks:
+      - base58_practice
+
